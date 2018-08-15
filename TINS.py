@@ -549,7 +549,7 @@ def try_tls(tls_serv):
 	except Exception, exc:
 		sys.exit( "Email failed: %s\r\nExiting." % str(exc) ) # give a error message
 
-def send_email(send_target, send_port, send_sender, send_recipient, send_body, send_tls):
+def send_email(send_target, send_port, send_sender, send_recipient, send_body, send_tls, send_helo):
 	try:
 		server = SMTP(send_target, send_port)
 		server.ehlo_or_helo_if_needed()
@@ -611,7 +611,7 @@ def main(argv):
 		print '   -p, --port [target port]'
 		print '   -t, --to, --recipient [recipient]'
 		print '   -f, --from, --sender [sender]'
-		print '   -e, --ehlo, --helo [ehlo/helo domain]'
+		# print '   -e, --ehlo, --helo [ehlo/helo domain]'
 		print '   --txt, --text [text email]'
 		print '   --htm, --html [html email]'
 		print '   --multi, --multipart [multipart MIME email]'
@@ -642,7 +642,7 @@ def main(argv):
 			print '   -p, --port [target port]'
 			print '   -t, --to, --recipient [recipient]'
 			print '   -f, --from, --sender [sender]'
-			print '   -e, --ehlo, --helo [helo/ehlo domain]'
+			# print '   -e, --ehlo, --helo [helo/ehlo domain]'
 			print '   --txt, --text [text email]'
 			print '   --htm, --html [html email]'
 			print '   --multi, --multipart [multipart MIME email]'
@@ -670,8 +670,8 @@ def main(argv):
 			recipient = arg
 		elif opt in ("-f", "--from", "--sender"):
 			sender = arg
-		elif opt in ("-e", "--ehlo", "--helo"):
-			helo = arg
+		# elif opt in ("-e", "--ehlo", "--helo"):
+		# 	helo = arg
 		elif opt in ("--tls", "--ssl"):
 			tls = True
 		elif opt in ("--virus", "--av"):
