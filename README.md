@@ -1,5 +1,5 @@
 Usage:
-   test_args.py <options>
+   TINS.py <options>
 Options:
    -h, --help [this info]
    --dbg, --debug [additional debug information]

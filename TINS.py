@@ -603,7 +603,7 @@ def main(argv):
 		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm","x-mailer"])
 	except getopt.GetoptError:
 		print 'Usage:'
-		print '   test_args.py <options>'
+		print '   TINS.py <options>'
 		print 'Options:'
 		print '   -h, --help [this info]'
 		print '   --dbg, --debug [additional debug information]'
@@ -634,7 +634,7 @@ def main(argv):
 	for opt, arg in opts:
 		if opt == '-h':
 			print 'Usage:'
-			print '   test_args.py <options>'
+			print '   TINS.py <options>'
 			print 'Options:'
 			print '   -h, --help [this info]'
 			print '   --dbg, --debug [additional debug information]'
