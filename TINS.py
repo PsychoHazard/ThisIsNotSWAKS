@@ -14,6 +14,11 @@ from email.mime.text import MIMEText
 from email.utils import make_msgid
 from email.mime.base import MIMEBase
 from random import randint
+from email import charset
+
+# fontvar='utf-8'
+# charset.add_charset(fontvar, charset.SHORTEST, charset.QP)
+# charset.add_charset('iso 8859-5', charset.SHORTEST, charset.QP)
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -718,10 +723,13 @@ def main(argv):
 			xmailer = arg
 		elif opt in ("--text-encode", "--text-charset"):
 			text_encode = arg
+			charset.add_charset(text_encode.lower(), charset.SHORTEST, charset.QP)
 		elif opt in ("--html-encode", "--html-charset"):
 			html_encode = arg
+			charset.add_charset(html_encode.lower(), charset.SHORTEST, charset.QP)
 		elif opt in ("--encode", "--charset"):
 			all_encode = arg
+			charset.add_charset(all_encode.lower(), charset.SHORTEST, charset.QP)
 			encode_both = True
 
 	if encode_both:
