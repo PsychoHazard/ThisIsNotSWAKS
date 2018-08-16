@@ -605,7 +605,7 @@ def main(argv):
 	seed = randint(0,2)
 
 	try:
-		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset="])
+		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html="])
 	except getopt.GetoptError:
 		print 'Usage:'
 		print '   TINS.py <options>'
@@ -699,7 +699,7 @@ def main(argv):
 			zip_test = True
 		elif opt in ("--eml", "--write"):
 			eml_file = True
-		elif opt in ("--no-send"):
+		elif opt == "--no-send":
 			eml_send = False
 			eml_file = True
 		elif opt == '--eml-name':
@@ -721,6 +721,11 @@ def main(argv):
 			all_encode = arg
 			charset.add_charset(all_encode.lower(), charset.SHORTEST, charset.QP)
 			encode_both = True
+		elif opt == '--body-text':
+			text = arg
+		elif opt == '--body-html':
+			html_text = arg
+		
 
 	if encode_both:
 		text_encode = all_encode
@@ -766,6 +771,8 @@ def main(argv):
 		print 'eml file name =', eml_name
 		print 'use text =', use_text
 		print 'use html =', use_html
+		print 'text charset = ', text_encode
+		print 'html charset = ', html_encode
 
 	msg = mime_headers(msg_id, xmailer, timestamp, subject, from_header, to_header)
 	
