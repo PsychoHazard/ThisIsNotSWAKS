@@ -18,7 +18,7 @@ from email.mime.base import MIMEBase
 from random import randint
 from email import charset
 
-VERSION = "0.2.8a"
+VERSION = "0.2.9a"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -847,10 +847,10 @@ def main(argv):
 	tmp.seek(0)
 	stderr_out = tmp.read()
 	tmp.close()
+	os.dup2(file_desc, 2)
+	os.close(file_desc)
 
 	if debug:
-		os.dup2(file_desc, 2)
-		os.close(file_desc)
 		debug_file = "debug_" + time.strftime("%Y%m%d%H%M%S%z") + ".log"
 		debug_out = open(debug_file, 'a')
 		print 'STDERR:'
