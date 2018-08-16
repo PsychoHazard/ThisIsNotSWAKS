@@ -550,9 +550,11 @@ def try_tls(tls_serv):
 	except Exception, exc:
 		sys.exit( "Email failed: %s\r\nExiting." % str(exc) ) # give a error message
 
-def send_email(send_target, send_port, send_sender, send_recipient, send_body, send_tls, send_helo):
+def send_email(send_target, send_port, send_sender, send_recipient, send_body, send_tls, debug_send):
 	try:
 		server = SMTP(send_target, send_port)
+		if debug_send:
+			server.set_debuglevel(100)
 		server.ehlo_or_helo_if_needed()
 		if send_tls:
 			try_tls(server)
@@ -799,7 +801,7 @@ def main(argv):
 	body = msg.as_string()
 
 	if eml_send:
-		send_email(target, port, sender, recipient, body, tls, helo)
+		send_email(target, port, sender, recipient, body, tls, debug)
 
 	if eml_file:
 		write_eml_file(eml_name, body)
