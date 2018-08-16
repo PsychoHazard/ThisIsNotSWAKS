@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 0.2.7 alpha
+# TINS version 0.2.8 alpha
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -18,7 +18,7 @@ from email.mime.base import MIMEBase
 from random import randint
 from email import charset
 
-VERSION = "0.2.7a"
+VERSION = "0.2.8a"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -556,13 +556,13 @@ def try_tls(tls_serv):
 
 def send_email(send_target, send_port, send_sender, send_recipient, send_body, send_tls, debug_send):
 	try:
-		if debug_send:
-			tmp = TemporaryFile()
-			file_desc = tmp.fileno()
-			tmp.close()
-			os.dup2(2, file_desc)
-			tmp = TemporaryFile()
-			os.dup2(tmp.fileno(), 2)
+		# if debug_send:
+		# 	tmp = TemporaryFile()
+		# 	file_desc = tmp.fileno()
+		# 	tmp.close()
+		# 	os.dup2(2, file_desc)
+		# 	tmp = TemporaryFile()
+		# 	os.dup2(tmp.fileno(), 2)
 		server = SMTP(send_target, send_port)
 		if debug_send:
 			server.set_debuglevel(100)
@@ -571,24 +571,24 @@ def send_email(send_target, send_port, send_sender, send_recipient, send_body, s
 			try_tls(server)
 		server.sendmail(send_sender, send_recipient, send_body)
 		server.quit()
-		if debug_send:
-			sys.stderr.flush()
-			tmp.flush()
-			tmp.seek(0)
-			stderr_out = tmp.read()
-			tmp.close()
-			os.dup2(file_desc, 2)
-			os.close(file_desc)
-			debug_file = "debug_" + time.strftime("%Y%m%d%H%M%S%z") + ".log"
-			debug_out = open(debug_file, 'a')
-			print 'STDERR:'
-			count = 0
-			for line in stderr_out.decode('utf-8').split("\r\n"):
-				count += 1
-				print("{:3} {}".format(count,line))
-				debug_out.write("{:3} {}".format(count,line))
-				debug_out.write("\r\n")
-			debug_out.close()
+		# if debug_send:
+		# 	sys.stderr.flush()
+		# 	tmp.flush()
+		# 	tmp.seek(0)
+		# 	stderr_out = tmp.read()
+		# 	tmp.close()
+		# 	os.dup2(file_desc, 2)
+		# 	os.close(file_desc)
+		# 	debug_file = "debug_" + time.strftime("%Y%m%d%H%M%S%z") + ".log"
+		# 	debug_out = open(debug_file, 'a')
+		# 	print 'STDERR:'
+		# 	count = 0
+		# 	for line in stderr_out.decode('utf-8').split("\r\n"):
+		# 		count += 1
+		# 		print("{:3} {}".format(count,line))
+		# 		debug_out.write("{:3} {}".format(count,line))
+		# 		debug_out.write("\r\n")
+		# 	debug_out.close()
 	except Exception, exc:
 		sys.exit( "Email failed: %s\r\nExiting." % str(exc) ) # give a error message
 
@@ -634,6 +634,13 @@ def main(argv):
 	all_encode = 'us-ascii'
 	encode_both = False
 	seed = randint(0,2)
+	
+	tmp = TemporaryFile()
+	file_desc = tmp.fileno()
+	tmp.close()
+	os.dup2(2, file_desc)
+	tmp = TemporaryFile()
+	os.dup2(tmp.fileno(), 2)
 
 	try:
 		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html="])
@@ -834,6 +841,26 @@ def main(argv):
 
 	if eml_file:
 		write_eml_file(eml_name, body)
+	
+	sys.stderr.flush()
+	tmp.flush()
+	tmp.seek(0)
+	stderr_out = tmp.read()
+	tmp.close()
+
+	if debug:
+		os.dup2(file_desc, 2)
+		os.close(file_desc)
+		debug_file = "debug_" + time.strftime("%Y%m%d%H%M%S%z") + ".log"
+		debug_out = open(debug_file, 'a')
+		print 'STDERR:'
+		count = 0
+		for line in stderr_out.decode('utf-8').split("\r\n"):
+			count += 1
+			print("{:3} {}".format(count,line))
+			debug_out.write("{:3} {}".format(count,line))
+			debug_out.write("\r\n")
+		debug_out.close()
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+	main(sys.argv[1:])
