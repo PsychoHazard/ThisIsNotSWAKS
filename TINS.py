@@ -16,10 +16,6 @@ from email.mime.base import MIMEBase
 from random import randint
 from email import charset
 
-# fontvar='utf-8'
-# charset.add_charset(fontvar, charset.SHORTEST, charset.QP)
-# charset.add_charset('iso 8859-5', charset.SHORTEST, charset.QP)
-
 def spam_subject(subject_seed):
 	if subject_seed == 1:
 		spammy_subject = "Guaranteed to lose 10-12 lbs in 30 days 10.206"
@@ -620,13 +616,11 @@ def main(argv):
 		print '   -p, --port [target port]'
 		print '   -t, --to, --recipient [recipient]'
 		print '   -f, --from, --sender [sender]'
-		# print '   -e, --ehlo, --helo [ehlo/helo domain]'
 		print '   --txt, --text [text email]'
 		print '   --htm, --html [html email]'
 		print '   --text-encode, --text-charset [character encoding for text section]'
 		print '   --html-encode, --html-charset [character encoding for html section]'
 		print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
-		# print '   --multi, --multipart [multipart MIME email]'
 		print '   --to-header [to: header if different from recipient]'
 		print '   --from-header [from: header if different from sender]'
 		print '   --ssl, --tls [use ssl/tls]'
@@ -654,13 +648,11 @@ def main(argv):
 			print '   -p, --port [target port]'
 			print '   -t, --to, --recipient [recipient]'
 			print '   -f, --from, --sender [sender]'
-			# print '   -e, --ehlo, --helo [helo/ehlo domain]'
 			print '   --txt, --text [text email]'
 			print '   --htm, --html [html email]'
 			print '   --text-encode, --text-charset [character encoding for text section]'
 			print '   --html-encode, --html-charset [character encoding for html section]'
 			print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
-		# print '   --multi, --multipart [multipart MIME email]'
 			print '   --to-header [to: header if different from recipient]'
 			print '   --from-header [from: header if different from sender]'
 			print '   --ssl, --tls [use ssl/tls]'
@@ -685,8 +677,6 @@ def main(argv):
 			recipient = arg
 		elif opt in ("-f", "--from", "--sender"):
 			sender = arg
-		# elif opt in ("-e", "--ehlo", "--helo"):
-		# 	helo = arg
 		elif opt in ("--tls", "--ssl"):
 			tls = True
 		elif opt in ("--virus", "--av"):
