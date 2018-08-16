@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 0.2.6 alpha
+# TINS version 0.2.7 alpha
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -17,6 +17,8 @@ from email.utils import make_msgid
 from email.mime.base import MIMEBase
 from random import randint
 from email import charset
+
+VERSION = "0.2.7a"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -600,7 +602,6 @@ def write_eml_file(write_eml_name, write_body):
 		sys.exit( "Writing to file failed: %s\r\nExiting." % str(exc) ) # give a error message
 
 def main(argv):
-	version = "0.2.6a"
 	timestamp = time.strftime("%a, %d %b %Y %H:%M:%S %z")
 	subject = "Test Message: " + timestamp
 	sender = "sender@example.com"
@@ -611,7 +612,7 @@ def main(argv):
 	port = 25
 	helo = ""
 	msg_id = make_msgid()
-	xmailer = "TINS v" + version
+	xmailer = "TINS v" + VERSION
 	text = "This is a test message.\r\nThe python has spoken!\r\nNyaah!"
 	html_text = '		<p><b>This is a test message!</b></p>\r\n		<p>The python has spoken! Nyaah!</p>'
 	av_test = False
