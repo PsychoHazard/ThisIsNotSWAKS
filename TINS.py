@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 0.1.1 alpha
+# TINS version 0.2.5 alpha
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -610,7 +610,7 @@ def main(argv):
 	port = 25
 	helo = ""
 	msg_id = make_msgid()
-	xmailer = "TINS v0.1.1a"
+	xmailer = "TINS v0.2.5a"
 	text = "This is a test message.\r\nThe python has spoken!\r\nNyaah!"
 	html_text = '		<p><b>This is a test message!</b></p>\r\n		<p>The python has spoken! Nyaah!</p>'
 	av_test = False
