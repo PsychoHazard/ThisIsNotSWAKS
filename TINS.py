@@ -635,6 +635,8 @@ def main(argv):
 		print '   --spam [generate test spam]'
 		print '   --adult [generate test adult spam (overrides --spam)]'
 		print '   -x, --xm, --x-mailer [X-Mailer header]'
+		print '   --body-text [text body string]'
+		print '   --body-html [html body string]'
 		sys.exit(2)
 
 	for opt, arg in opts:
@@ -667,6 +669,8 @@ def main(argv):
 			print '   --spam [generate test spam]'
 			print '   --adult [generate test adult spam (overrides --spam)]'
 			print '   -x, --xm, --x-mailer [X-Mailer header]'
+			print '   --body-text [text body string]'
+			print '   --body-html [html body string]'
 		elif opt in ("--dbg", "--debug"):
 			debug = True
 		elif opt in ("-s", "--server", "--target"):
