@@ -480,7 +480,7 @@ def mime_headers(mime_msg_id, mime_xmailer, mime_timestamp, mime_subject, mime_f
 		sys.exit( "Adding MIME headers failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return mime_msg
 
-def text_mime(text_msg, mime_text, zip_text, url_text):
+def text_mime(text_msg, mime_text, zip_text, url_text, text_charset):
 	zip_mime_text = ""
 	url_mime_text = "\r\n"
 	try:
@@ -489,13 +489,13 @@ def text_mime(text_msg, mime_text, zip_text, url_text):
 		if url_text:
 			url_mime_text = "\r\nFor awesome stuff and free candy go to http://tapdemo.evilscheme.org/files/tapdemo_313533343139383733322e3939.docx\r\nWe promise it's totally safe!\r\n"
 		mime_text_body = mime_text + zip_mime_text + url_mime_text
-		text_part = MIMEText(mime_text_body, 'plain')
+		text_part = MIMEText(mime_text_body, 'plain', text_charset)
 		text_msg.attach(text_part)
 	except Exception, exc:
 		sys.exit( "Adding text body failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return text_msg
 	
-def html_mime(html_msg, mime_html_text, zip_html, url_html):
+def html_mime(html_msg, mime_html_text, zip_html, url_html, html_charset):
 	zip_mime_html = "\r\n"
 	url_mime_html = ""
 	if zip_html:
@@ -513,7 +513,7 @@ def html_mime(html_msg, mime_html_text, zip_html, url_html):
 		</html>
 		"""
 		mime_html_body = mime_html1 + "\r\n" + mime_html2 + "\r\n" + mime_html3
-		html_part = MIMEText(mime_html_body, 'html')
+		html_part = MIMEText(mime_html_body, 'html', html_charset)
 		html_msg.attach(html_part)
 	except Exception, exc:
 		sys.exit( "Adding html body failed: %s\r\nExiting." % str(exc) ) # give a error message
@@ -597,10 +597,14 @@ def main(argv):
 	debug = False
 	no_has_to = True
 	no_has_from = True
+	text_encode = 'us-ascii'
+	html_encode = 'us-ascii'
+	all_encode = 'us-ascii'
+	encode_both = False
 	seed = randint(0,2)
 
 	try:
-		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm","x-mailer"])
+		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset="])
 	except getopt.GetoptError:
 		print 'Usage:'
 		print '   TINS.py <options>'
@@ -614,7 +618,10 @@ def main(argv):
 		# print '   -e, --ehlo, --helo [ehlo/helo domain]'
 		print '   --txt, --text [text email]'
 		print '   --htm, --html [html email]'
-		print '   --multi, --multipart [multipart MIME email]'
+		print '   --text-encode, --text-charset [character encoding for text section]'
+		print '   --html-encode, --html-charset [character encoding for html section]'
+		print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
+		# print '   --multi, --multipart [multipart MIME email]'
 		print '   --to-header [to: header if different from recipient]'
 		print '   --from-header [from: header if different from sender]'
 		print '   --ssl, --tls [use ssl/tls]'
@@ -645,7 +652,10 @@ def main(argv):
 			# print '   -e, --ehlo, --helo [helo/ehlo domain]'
 			print '   --txt, --text [text email]'
 			print '   --htm, --html [html email]'
-			print '   --multi, --multipart [multipart MIME email]'
+			print '   --text-encode, --text-charset [character encoding for text section]'
+			print '   --html-encode, --html-charset [character encoding for html section]'
+			print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
+		# print '   --multi, --multipart [multipart MIME email]'
 			print '   --to-header [to: header if different from recipient]'
 			print '   --from-header [from: header if different from sender]'
 			print '   --ssl, --tls [use ssl/tls]'
@@ -706,7 +716,18 @@ def main(argv):
 			use_html = False
 		elif opt in ("-x", "--xm", "--x-mailer"):
 			xmailer = arg
+		elif opt in ("--text-encode", "--text-charset"):
+			text_encode = arg
+		elif opt in ("--html-encode", "--html-charset"):
+			html_encode = arg
+		elif opt in ("--encode", "--charset"):
+			all_encode = arg
+			encode_both = True
 
+	if encode_both:
+		text_encode = all_encode
+		html_encode = all_encode
+	
 	if no_has_to:
 		to_header = recipient
 
@@ -751,11 +772,11 @@ def main(argv):
 	msg = mime_headers(msg_id, xmailer, timestamp, subject, from_header, to_header)
 	
 	if use_text:
-		msg_text = text_mime(msg, text, zip_test, url_test)
+		msg_text = text_mime(msg, text, zip_test, url_test, text_encode)
 		msg = msg_text
 	
 	if use_html:
-		msg_html = html_mime(msg, html_text, zip_test, url_test)
+		msg_html = html_mime(msg, html_text, zip_test, url_test, html_encode)
 		msg = msg_html
 
 	if av_test:
