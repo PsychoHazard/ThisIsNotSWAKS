@@ -1,0 +1,34 @@
+Content-Type: multipart/alternative;
+ boundary="===============2929528718050199766=="
+MIME-Version: 1.0
+Message-Id: <153454064548.4803.2593281584475850781@FRC1QN2.corp.proofpoint.com>
+X-Mailer: TINS v0.2.11a
+Date: Fri, 17 Aug 2018 14:17:25 -0700
+Subject: Test Message: Fri, 17 Aug 2018 14:17:25 -0700
+From: sender@example.com
+To: recipient@example.com
+
+--===============2929528718050199766==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+This is a test message.
+The python has spoken!
+Nyaah!
+
+--===============2929528718050199766==
+Content-Type: text/html; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+		<html>
+			<body>
+		
+		<p><b>This is a test message!</b></p>
+		<p>The python has spoken! Nyaah!</p>
+
+			</body>
+		</html>
+		
+--===============2929528718050199766==--
