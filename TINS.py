@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 0.2.10 alpha
+# TINS version 0.2.11 alpha
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -18,7 +18,7 @@ from email.mime.base import MIMEBase
 from random import randint
 from email import charset
 
-VERSION = "0.2.10a"
+VERSION = "0.2.11a"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -494,7 +494,7 @@ def text_mime(text_msg, mime_text, zip_text, url_text, text_charset):
 		if url_text:
 			url_mime_text = "\r\nFor awesome stuff and free candy go to http://tapdemo.evilscheme.org/files/tapdemo_313533343139383733322e3939.docx\r\nWe promise it's totally safe!\r\n"
 		mime_text_body = mime_text + zip_mime_text + url_mime_text
-		text_part = MIMEText(mime_text_body, 'plain', text_charset)
+		text_part = MIMEText(mime_text_body.encode(text_charset), 'plain', text_charset)
 		text_msg.attach(text_part)
 	except Exception, exc:
 		sys.exit( "Adding text body failed: %s\r\nExiting." % str(exc) ) # give a error message
@@ -518,7 +518,7 @@ def html_mime(html_msg, mime_html_text, zip_html, url_html, html_charset):
 		</html>
 		"""
 		mime_html_body = mime_html1 + "\r\n" + mime_html2 + "\r\n" + mime_html3
-		html_part = MIMEText(mime_html_body, 'html', html_charset)
+		html_part = MIMEText(mime_html_body.encode(html_charset), 'html', html_charset)
 		html_msg.attach(html_part)
 	except Exception, exc:
 		sys.exit( "Adding html body failed: %s\r\nExiting." % str(exc) ) # give a error message
