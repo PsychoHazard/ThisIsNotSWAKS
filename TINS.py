@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 0.2.11 alpha
+# TINS version 0.2.12 alpha
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -18,7 +18,8 @@ from email.mime.base import MIMEBase
 from random import randint
 from email import charset
 
-VERSION = "0.2.11a"
+PNAME = "TINS"
+VERSION = "0.2.12a"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -587,7 +588,7 @@ def main(argv):
 	port = 25
 	helo = ""
 	msg_id = make_msgid()
-	xmailer = "TINS v" + VERSION
+	xmailer = PNAME + " v" + VERSION
 	text = "This is a test message.\r\nThe python has spoken!\r\nNyaah!"
 	html_text = '		<p><b>This is a test message!</b></p>\r\n		<p>The python has spoken! Nyaah!</p>'
 	av_test = False
