@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 0.2.13 alpha
+# TINS version 0.2.14 alpha
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -19,7 +19,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "0.2.13a"
+VERSION = "0.2.14a"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -486,32 +486,26 @@ def mime_headers(mime_msg_id, mime_xmailer, mime_timestamp, mime_subject, mime_f
 		sys.exit( "Adding MIME headers failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return mime_msg
 
-def text_mime(text_msg, mime_text, zip_text, url_text, ssn_text, text_charset):
+def text_mime(text_msg, mime_text, zip_text, url_text, text_charset):
 	zip_mime_text = ""
-	ssn_mime_text = ""
 	url_mime_text = "\r\n"
 	try:
 		if zip_text:
 			zip_mime_text = '\r\nPlease see the attached.\r\nIf needed, password = "test"\r\n'
-		if ssn_text:
-			ssn_mime_text = '\r\n623-57-9564\r\nSocial 152 19 0112\r\nSSN 215-79-8735\r\n'
 		if url_text:
 			url_mime_text = "\r\nFor awesome stuff and free candy go to http://tapdemo.evilscheme.org/files/tapdemo_313533343139383733322e3939.docx\r\nWe promise it's totally safe!\r\n"
-		mime_text_body = mime_text + ssn_mime_text + zip_mime_text + url_mime_text
+		mime_text_body = mime_text + zip_mime_text + url_mime_text
 		text_part = MIMEText(mime_text_body.encode(text_charset), 'plain', text_charset)
 		text_msg.attach(text_part)
 	except Exception, exc:
 		sys.exit( "Adding text body failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return text_msg
 	
-def html_mime(html_msg, mime_html_text, zip_html, url_html, ssn_text, html_charset):
+def html_mime(html_msg, mime_html_text, zip_html, url_html, html_charset):
 	zip_mime_html = "\r\n"
-	ssn_mime_html = ""
 	url_mime_html = ""
 	if zip_html:
 		zip_mime_html = '\r\n		<p>Please see the attached.<br>\r\n		If needed, password = "test"</p>\r\n'
-	if ssn_html:
-		ssn_mime_html = '\r\n		<p>623-57-9564<br>		Social 152 19 0112<br>		SSN 215-79-8735</p>\r\n'
 	if url_html:
 		url_mime_html = '		<p>For awesome stuff and free candy go to <a href="http://tapdemo.evilscheme.org/files/tapdemo_313533343139383733322e3939.docx">totallysafe.unmarkedvan.com</a></p>\r\n'
 	try:
@@ -519,7 +513,7 @@ def html_mime(html_msg, mime_html_text, zip_html, url_html, ssn_text, html_chars
 		<html>
 			<body>
 		"""
-		mime_html2 = mime_html_text + ssn_mime_html  + zip_mime_html + url_mime_html
+		mime_html2 = mime_html_text + zip_mime_html + url_mime_html
 		mime_html3 = """\
 			</body>
 		</html>
@@ -602,7 +596,6 @@ def main(argv):
 	adult_test = False
 	url_test = False
 	zip_test = False
-	ssn_test = False
 	tls = False
 	use_text = True
 	use_html = True
@@ -626,7 +619,7 @@ def main(argv):
 	os.dup2(tmp.fileno(), 2)
 
 	try:
-		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn"])
+		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html="])
 	except getopt.GetoptError:
 		print 'Usage:'
 		print '   TINS.py <options>'
@@ -648,7 +641,6 @@ def main(argv):
 		print '   --url [include malicious url]'
 		print '   --av, --virus [include eicar test virus]'
 		print '   --zip [include password protected zip file]'
-		print '   --ssn [include ssn]'
 		print '   --eml, --write [write email to eml file]'
 		print '   --no-send [do not send email (implies --eml/--write)]'
 		print '   --eml-name [email file name (implies --eml/--write)]'
@@ -683,7 +675,6 @@ def main(argv):
 			print '   --url [include malicious url]'
 			print '   --av, --virus [include eicar test virus]'
 			print '   --zip [include password protected zip file]'
-			print '   --ssn [include ssn]'
 			print '   --eml, --write [write email to eml file]'
 			print '   --no-send [do not send email (implies --eml/--write)]'
 			print '   --eml-name [email file name (implies --eml/--write)]'
@@ -752,8 +743,6 @@ def main(argv):
 			text = arg
 		elif opt == '--body-html':
 			html_text = arg
-		elif opt == '--ssn':
-			ssn_test = True
 		
 
 	if encode_both:
@@ -806,11 +795,11 @@ def main(argv):
 	msg = mime_headers(msg_id, xmailer, timestamp, subject, from_header, to_header)
 	
 	if use_text:
-		msg_text = text_mime(msg, text, zip_test, url_test, ssn_test, text_encode)
+		msg_text = text_mime(msg, text, zip_test, url_test, text_encode)
 		msg = msg_text
 	
 	if use_html:
-		msg_html = html_mime(msg, html_text, zip_test, url_test, ssn_test, html_encode)
+		msg_html = html_mime(msg, html_text, zip_test, url_test, html_encode)
 		msg = msg_html
 
 	if av_test:
