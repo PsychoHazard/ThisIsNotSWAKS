@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.1.1 beta
+# TINS version 1.2.1 beta
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -19,7 +19,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.1.1b"
+VERSION = "1.2.1b"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -473,15 +473,18 @@ Email Address & Phone Number(Please Write Neat)
 """
 	return spammy_html
 
-def mime_headers(mime_msg_id, mime_xmailer, mime_timestamp, mime_subject, mime_from_header, mime_to_header):
+def mime_headers(mime_multipart, mime_msg_id, mime_xmailer, mime_timestamp, mime_subject, mime_from_header, mime_to_header, mime_importance, mime_priority):
 	try:
-		mime_msg = MIMEMultipart('alternative')
-		mime_msg['Message-Id'] = mime_msg_id
-		mime_msg['X-Mailer'] = mime_xmailer
+		mime_msg = MIMEMultipart(mime_multipart)
 		mime_msg['Date'] = mime_timestamp
 		mime_msg['Subject'] = mime_subject
 		mime_msg['From'] = mime_from_header
 		mime_msg['To'] = mime_to_header
+		mime_msg['Message-Id'] = mime_msg_id
+		mime_msg['Importance'] = mime_importance
+		mime_msg['X-Priority'] = mime_priority
+		mime_msg['X-Mailer'] = mime_xmailer
+		# mime_msg['Content-Transfer-Encoding'] = '8bit'
 	except Exception, exc:
 		sys.exit( "Adding MIME headers failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return mime_msg
@@ -617,6 +620,9 @@ def main(argv):
 	all_encode = 'us-ascii'
 	encode_both = False
 	seed = randint(0,2)
+	multi_type = 'alternative'
+	msg_importance = 'medium'
+	msg_priority = '3'
 	
 	tmp = TemporaryFile()
 	file_desc = tmp.fileno()
@@ -626,7 +632,7 @@ def main(argv):
 	os.dup2(tmp.fileno(), 2)
 
 	try:
-		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn"])
+		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn","mix","mixed","high","low"])
 	except getopt.GetoptError:
 		print 'Usage:'
 		print '   TINS.py <options>'
@@ -637,6 +643,7 @@ def main(argv):
 		print '   -t, --to, --recipient [recipient]'
 		print '   -f, --from, --sender [sender]'
 		print '   -x, --xm, --x-mailer [X-Mailer header]'
+		print '   --mix, --mixed [use multipart/mixed instead of multipart/alternative]'
 		print '   --to-header [to: header if different from recipient]'
 		print '   --from-header [from: header if different from sender]'
 		print '   --body-text [text body string]'
@@ -644,6 +651,7 @@ def main(argv):
 		print '   --text-encode, --text-charset [character encoding for text section]'
 		print '   --html-encode, --html-charset [character encoding for html section]'
 		print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
+		print '   --high, --low [message importance (default is medium)]'
 		print '   --ssl, --tls [use ssl/tls]'
 		print '   --url [include malicious url]'
 		print '   --ssn [include ssn numbers]'
@@ -670,6 +678,7 @@ def main(argv):
 			print '   -t, --to, --recipient [recipient]'
 			print '   -f, --from, --sender [sender]'
 			print '   -x, --xm, --x-mailer [X-Mailer header]'
+			print '   --mix, --mixed [use multipart/mixed instead of multipart/alternative]'
 			print '   --to-header [to: header if different from recipient]'
 			print '   --from-header [from: header if different from sender]'
 			print '   --body-text [text body string]'
@@ -677,6 +686,7 @@ def main(argv):
 			print '   --text-encode, --text-charset [character encoding for text section]'
 			print '   --html-encode, --html-charset [character encoding for html section]'
 			print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
+			print '   --high, --low [message importance (default is medium)]'
 			print '   --ssl, --tls [use ssl/tls]'
 			print '   --url [include malicious url]'
 			print '   --ssn [include ssn numbers]'
@@ -704,6 +714,8 @@ def main(argv):
 			tls = True
 		elif opt in ("--virus", "--av"):
 			av_test = True
+		elif opt in ("--mix", "--mixed"):
+			multi_type = 'mixed'
 		elif opt == '--subject':
 			subject = arg
 		elif opt == '--to-header':
@@ -750,7 +762,12 @@ def main(argv):
 			text = arg
 		elif opt == '--body-html':
 			html_text = arg
-		
+		elif opt == '--low':
+			msg_importance = 'low'
+			msg_priority = '5'
+		elif opt == '--high':
+			msg_importance = 'high'
+			msg_priority = '1'
 
 	if encode_both:
 		text_encode = all_encode
@@ -799,7 +816,7 @@ def main(argv):
 		print 'text charset = ', text_encode
 		print 'html charset = ', html_encode
 
-	msg = mime_headers(msg_id, xmailer, timestamp, subject, from_header, to_header)
+	msg = mime_headers(multi_type, msg_id, xmailer, timestamp, subject, from_header, to_header, msg_importance, msg_priority)
 	
 	if use_text:
 		msg_text = text_mime(msg, text, zip_test, url_test, ssn_test, text_encode)
