@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.0.1 beta
+# TINS version 1.1.1 beta
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -19,7 +19,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.0.1b"
+VERSION = "1.1.1b"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
