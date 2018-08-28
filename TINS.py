@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 0.2.16 alpha
+# TINS version 1.0.1 beta
 # Written and maintained by Rob Voss
 # rvoss@proofpoint.com
 
@@ -19,7 +19,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "0.2.16a"
+VERSION = "1.0.1b"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -632,18 +632,18 @@ def main(argv):
 		print '   TINS.py <options>'
 		print 'Options:'
 		print '   -h, --help [this info]'
-		print '   --dbg, --debug [additional debug information]'
 		print '   -s, --server, --target [target mail server]'
 		print '   -p, --port [target port]'
 		print '   -t, --to, --recipient [recipient]'
 		print '   -f, --from, --sender [sender]'
-		print '   --txt, --text [text email]'
-		print '   --htm, --html [html email]'
+		print '   -x, --xm, --x-mailer [X-Mailer header]'
+		print '   --to-header [to: header if different from recipient]'
+		print '   --from-header [from: header if different from sender]'
+		print '   --body-text [text body string]'
+		print '   --body-html [html body string]'
 		print '   --text-encode, --text-charset [character encoding for text section]'
 		print '   --html-encode, --html-charset [character encoding for html section]'
 		print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
-		print '   --to-header [to: header if different from recipient]'
-		print '   --from-header [from: header if different from sender]'
 		print '   --ssl, --tls [use ssl/tls]'
 		print '   --url [include malicious url]'
 		print '   --ssn [include ssn numbers]'
@@ -656,9 +656,7 @@ def main(argv):
 		print '   --no-html [no html body]'
 		print '   --spam [generate test spam]'
 		print '   --adult [generate test adult spam (overrides --spam)]'
-		print '   -x, --xm, --x-mailer [X-Mailer header]'
-		print '   --body-text [text body string]'
-		print '   --body-html [html body string]'
+		print '   --dbg, --debug [additional debug information]'
 		sys.exit(2)
 
 	for opt, arg in opts:
@@ -667,18 +665,18 @@ def main(argv):
 			print '   TINS.py <options>'
 			print 'Options:'
 			print '   -h, --help [this info]'
-			print '   --dbg, --debug [additional debug information]'
 			print '   -s, --server, --target [target mail server]'
 			print '   -p, --port [target port]'
 			print '   -t, --to, --recipient [recipient]'
 			print '   -f, --from, --sender [sender]'
-			print '   --txt, --text [text email]'
-			print '   --htm, --html [html email]'
+			print '   -x, --xm, --x-mailer [X-Mailer header]'
+			print '   --to-header [to: header if different from recipient]'
+			print '   --from-header [from: header if different from sender]'
+			print '   --body-text [text body string]'
+			print '   --body-html [html body string]'
 			print '   --text-encode, --text-charset [character encoding for text section]'
 			print '   --html-encode, --html-charset [character encoding for html section]'
 			print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
-			print '   --to-header [to: header if different from recipient]'
-			print '   --from-header [from: header if different from sender]'
 			print '   --ssl, --tls [use ssl/tls]'
 			print '   --url [include malicious url]'
 			print '   --ssn [include ssn numbers]'
@@ -691,9 +689,7 @@ def main(argv):
 			print '   --no-html [no html body]'
 			print '   --spam [generate test spam]'
 			print '   --adult [generate test adult spam (overrides --spam)]'
-			print '   -x, --xm, --x-mailer [X-Mailer header]'
-			print '   --body-text [text body string]'
-			print '   --body-html [html body string]'
+			print '   --dbg, --debug [additional debug information]'
 		elif opt in ("--dbg", "--debug"):
 			debug = True
 		elif opt in ("-s", "--server", "--target"):
