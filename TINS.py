@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.3.1 beta
+# TINS version 1.4.1 beta
 # Copyright (c) 2018 Rob Voss
 # rvoss@proofpoint.com
 
@@ -9,17 +9,21 @@ import time
 import sys
 import getopt
 import os
+import mimetypes
 from tempfile import TemporaryFile
 from smtplib import SMTP
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import make_msgid
 from email.mime.base import MIMEBase
+from email import encoders
+from email.mime.audio import MIMEAudio
+from email.mime.image import MIMEImage
 from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.3.1b"
+VERSION = "1.4.1b"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -557,6 +561,42 @@ def pass_zip(zip_msg):
 		sys.exit( "Adding zip file failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return zip_msg
 
+def attach_file(attach_msg, file_attach):
+	try:
+		# attach_part = MIMEBase('application','octet-stream')
+		# attach_part.set_payload('')
+		ctype, encoding = mimetypes.guess_type(file_attach)
+		if ctype is None or encoding is not None:
+			ctype = 'application/octet-stream'
+		print ctype
+		print encoding
+		maintype, subtype = ctype.split('/', 1)
+		if maintype == 'text':
+			print maintype
+			af = open(file_attach, 'r')
+			attach_part = MIMEText(af.read(), _subtype=subtype)
+			af.close()
+		elif maintype == 'image':
+			print maintype
+			af = open(file_attach, 'rb')
+			attach_part = MIMEImage(af.read(), _subtype=subtype)
+			af.close()
+		# elif maintype == 'audio':
+		# 	af = open(file_attach, 'rb')
+		# 	attach_part = MIMEAudio(af.read(), _subtype=subtype)
+		# 	af.close()
+		# else:
+		# 	af = open(file_attach, 'rb')
+		# 	attach_part = MIMEBase(maintype, subtype)
+		# 	attach_part.set_payload(af.read())
+		# 	af.close()
+		# 	encoders.encode_base64(attach_part)
+		attach_part.add_header('Content-Disposition', 'attachment', filename=file_attach)
+		attach_msg.attach(attach_part)
+	except Exception, exc:
+		sys.exit( "Adding %s file failed: %s\r\nExiting." % (file_attach, str(exc)) ) # give a error message
+	return attach_msg
+
 def try_tls(tls_serv):
 	try:
 		tls_serv.starttls()
@@ -622,8 +662,10 @@ def main(argv):
 	multi_type = 'alternative'
 	msg_importance = 'medium'
 	msg_priority = '3'
-	textfile = 'example.txt'
-	htmlfile = 'example.htm'
+	textfile = 'NONE'
+	htmlfile = 'NONE'
+	attachfile = 'NONE'
+	is_attach = False
 	
 	tmp = TemporaryFile()
 	file_desc = tmp.fileno()
@@ -633,7 +675,7 @@ def main(argv):
 	os.dup2(tmp.fileno(), 2)
 
 	try:
-		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn","mix","mixed","high","low","text-body=","html-body="])
+		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn","mix","mixed","high","low","text-body=","html-body=","attach="])
 	except getopt.GetoptError:
 		print 'Usage:'
 		print '   TINS.py <options>'
@@ -668,6 +710,7 @@ def main(argv):
 		print '   --dbg, --debug [additional debug information]'
 		print '   --text-body [text body from specified file]'
 		print '   --html-body [html body from specified file]'
+		print '   --attach [attach specified file]'
 		sys.exit(2)
 
 	for opt, arg in opts:
@@ -705,6 +748,7 @@ def main(argv):
 			print '   --dbg, --debug [additional debug information]'
 			print '   --text-body [text body from specified file]'
 			print '   --html-body [html body from specified file]'
+			print '   --attach [attach specified file]'
 		elif opt in ("--dbg", "--debug"):
 			debug = True
 		elif opt in ("-s", "--server", "--target"):
@@ -783,6 +827,9 @@ def main(argv):
 			hb = open(htmlfile, 'r')
 			html_text = hb.read()
 			hb.close()
+		elif opt == '--attach':
+			is_attach = True
+			attachfile = arg
 
 	if encode_both:
 		text_encode = all_encode
@@ -823,6 +870,7 @@ def main(argv):
 		print 'adult spam test =', adult_test
 		print 'url test =', url_test
 		print 'zip test =', zip_test
+		print 'ssn test =', ssn_test
 		print 'send email =', eml_send
 		print 'write eml file =', eml_file
 		print 'eml file name =', eml_name
@@ -830,6 +878,12 @@ def main(argv):
 		print 'use html =', use_html
 		print 'text charset = ', text_encode
 		print 'html charset = ', html_encode
+		print 'content-type = ', 'multipart/' + multi_type
+		print 'importance = ', msg_importance
+		print 'priority = ', msg_priority
+		print 'text body = ', textfile
+		print 'html body = ', htmlfile
+		print 'attached file = ', attachfile
 
 	msg = mime_headers(multi_type, msg_id, xmailer, timestamp, subject, from_header, to_header, msg_importance, msg_priority)
 	
@@ -848,6 +902,10 @@ def main(argv):
 	if zip_test:
 		zip_message = pass_zip(msg)
 		msg = zip_message
+
+	if is_attach:
+		attach_message = attach_file(msg, attachfile)
+		msg = attach_message
 
 	body = msg.as_string()
 

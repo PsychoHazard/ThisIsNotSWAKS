@@ -1,16 +1,15 @@
-Content-Type: multipart/alternative;
- boundary="===============2249677678185739027=="
+Content-Type: multipart/mixed; boundary="===============0478412892346358068=="
 MIME-Version: 1.0
-Date: Wed, 29 Aug 2018 15:57:55 -0700
-Subject: Test Message: Wed, 29 Aug 2018 15:57:55 -0700
+Date: Wed, 29 Aug 2018 15:58:59 -0700
+Subject: Test Message: Wed, 29 Aug 2018 15:58:59 -0700
 From: sender@example.com
 To: recipient@example.com
-Message-Id: <153558347566.2085.11249483277714939766@FRC1QN2.corp.proofpoint.com>
+Message-Id: <153558353976.2092.9343528116713752379@FRC1QN2.corp.proofpoint.com>
 Importance: medium
 X-Priority: 3
 X-Mailer: TINS v1.4.1b
 
---===============2249677678185739027==
+--===============0478412892346358068==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -19,7 +18,7 @@ This is a test message.
 The python has spoken!
 Nyaah!
 
---===============2249677678185739027==
+--===============0478412892346358068==
 Content-Type: text/html; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -33,4 +32,4 @@ Content-Transfer-Encoding: 7bit
 			</body>
 		</html>
 		
---===============2249677678185739027==--
+--===============0478412892346358068==--

@@ -1,0 +1,52 @@
+Content-Type: multipart/alternative;
+ boundary="===============7092150801419679732=="
+MIME-Version: 1.0
+Date: Wed, 29 Aug 2018 15:55:54 -0700
+Subject: Test Message: Wed, 29 Aug 2018 15:55:54 -0700
+From: sender@example.com
+To: recipient@example.com
+Message-Id: <153558335476.2079.11430458716973738922@FRC1QN2.corp.proofpoint.com>
+Importance: medium
+X-Priority: 3
+X-Mailer: TINS v1.4.1b
+
+--===============7092150801419679732==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+This is a test message.
+The python has spoken!
+Nyaah!
+Please see the attached.
+If needed, password = "test"
+
+
+--===============7092150801419679732==
+Content-Type: text/html; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+		<html>
+			<body>
+		
+		<p><b>This is a test message!</b></p>
+		<p>The python has spoken! Nyaah!</p>
+		<p>Please see the attached.<br>
+		If needed, password = "test"</p>
+
+			</body>
+		</html>
+		
+--===============7092150801419679732==
+Content-Type: application/octet-stream
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="../test.zip"
+
+UEsDBAoACQAAACl7aDTABgONIAAAABQAAAARABUAYXJjaGl2ZXMvdGVzdC50eHRVVAkAA95nD0Te
+Zw9EVXgEAOYn5ieyjOxAmV7wTzO2Ecxui1HKQBjXwV22GTqb6O99X3KDd1BLBwjABgONIAAAABQA
+AABQSwECFwMKAAkAAAApe2g0wAYDjSAAAAAUAAAAEQANAAAAAAABAAAAtIEAAAAAYXJjaGl2ZXMv
+dGVzdC50eHRVVAUAA95nD0RVeAAAUEsFBgAAAAABAAEATAAAAHQAAAAAAA==
+
+--===============7092150801419679732==--

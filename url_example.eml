@@ -1,0 +1,39 @@
+Content-Type: multipart/alternative;
+ boundary="===============0058601265411034541=="
+MIME-Version: 1.0
+Date: Wed, 29 Aug 2018 15:55:05 -0700
+Subject: Test Message: Wed, 29 Aug 2018 15:55:05 -0700
+From: sender@example.com
+To: recipient@example.com
+Message-Id: <153558330508.2076.15170957587991738812@FRC1QN2.corp.proofpoint.com>
+Importance: medium
+X-Priority: 3
+X-Mailer: TINS v1.4.1b
+
+--===============0058601265411034541==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+This is a test message.
+The python has spoken!
+Nyaah!
+For awesome stuff and free candy go to http://tapdemo.evilscheme.org/files/tapdemo_313533343139383733322e3939.docx
+We promise it's totally safe!
+
+--===============0058601265411034541==
+Content-Type: text/html; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+		<html>
+			<body>
+		
+		<p><b>This is a test message!</b></p>
+		<p>The python has spoken! Nyaah!</p>
+		<p>For awesome stuff and free candy go to <a href="http://tapdemo.evilscheme.org/files/tapdemo_313533343139383733322e3939.docx">totallysafe.unmarkedvan.com</a></p>
+
+			</body>
+		</html>
+		
+--===============0058601265411034541==--

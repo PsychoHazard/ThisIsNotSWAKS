@@ -1,0 +1,22 @@
+Content-Type: multipart/alternative;
+ boundary="===============6381585407230874512=="
+MIME-Version: 1.0
+Date: Wed, 29 Aug 2018 15:57:39 -0700
+Subject: Test Message: Wed, 29 Aug 2018 15:57:39 -0700
+From: sender@example.com
+To: recipient@example.com
+Message-Id: <153558345935.2084.17046093750726644000@FRC1QN2.corp.proofpoint.com>
+Importance: medium
+X-Priority: 3
+X-Mailer: TINS v1.4.1b
+
+--===============6381585407230874512==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+This is a test message.
+The python has spoken!
+Nyaah!
+
+--===============6381585407230874512==--
