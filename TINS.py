@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.2.2 beta
+# TINS version 1.3.1 beta
 # Copyright (c) 2018 Rob Voss
 # rvoss@proofpoint.com
 
@@ -19,7 +19,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.2.2b"
+VERSION = "1.3.1b"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -622,6 +622,8 @@ def main(argv):
 	multi_type = 'alternative'
 	msg_importance = 'medium'
 	msg_priority = '3'
+	textfile = 'example.txt'
+	htmlfile = 'example.htm'
 	
 	tmp = TemporaryFile()
 	file_desc = tmp.fileno()
@@ -631,7 +633,7 @@ def main(argv):
 	os.dup2(tmp.fileno(), 2)
 
 	try:
-		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn","mix","mixed","high","low"])
+		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn","mix","mixed","high","low","text-body=","html-body="])
 	except getopt.GetoptError:
 		print 'Usage:'
 		print '   TINS.py <options>'
@@ -664,6 +666,8 @@ def main(argv):
 		print '   --spam [generate test spam]'
 		print '   --adult [generate test adult spam (overrides --spam)]'
 		print '   --dbg, --debug [additional debug information]'
+		print '   --text-body [text body from specified file]'
+		print '   --html-body [html body from specified file]'
 		sys.exit(2)
 
 	for opt, arg in opts:
@@ -699,6 +703,8 @@ def main(argv):
 			print '   --spam [generate test spam]'
 			print '   --adult [generate test adult spam (overrides --spam)]'
 			print '   --dbg, --debug [additional debug information]'
+			print '   --text-body [text body from specified file]'
+			print '   --html-body [html body from specified file]'
 		elif opt in ("--dbg", "--debug"):
 			debug = True
 		elif opt in ("-s", "--server", "--target"):
@@ -767,6 +773,16 @@ def main(argv):
 		elif opt == '--high':
 			msg_importance = 'high'
 			msg_priority = '1'
+		elif opt == '--text-body':
+			textfile = arg
+			tb = open(textfile, 'r')
+			text = tb.read()
+			tb.close()
+		elif opt == '--html-body':
+			htmlfile = arg
+			hb = open(htmlfile, 'r')
+			html_text = hb.read()
+			hb.close()
 
 	if encode_both:
 		text_encode = all_encode

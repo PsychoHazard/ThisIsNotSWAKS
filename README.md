@@ -29,3 +29,5 @@ Options:
    --spam [generate test spam]
    --adult [generate test adult spam (overrides --spam)]
    --dbg, --debug [additional debug information]
+   --text-body [text body from specified file]
+   --html-body [html body from specified file]
