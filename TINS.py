@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.2.1 beta
-# Written and maintained by Rob Voss
+# TINS version 1.2.2 beta
+# Copyright (c) 2018 Rob Voss
 # rvoss@proofpoint.com
 
 import time
@@ -19,7 +19,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.2.1b"
+VERSION = "1.2.2b"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -484,7 +484,6 @@ def mime_headers(mime_multipart, mime_msg_id, mime_xmailer, mime_timestamp, mime
 		mime_msg['Importance'] = mime_importance
 		mime_msg['X-Priority'] = mime_priority
 		mime_msg['X-Mailer'] = mime_xmailer
-		# mime_msg['Content-Transfer-Encoding'] = '8bit'
 	except Exception, exc:
 		sys.exit( "Adding MIME headers failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return mime_msg
