@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.4.1 beta
+# TINS version 1.4.2 beta
 # Copyright (c) 2018 Rob Voss
 # rvoss@proofpoint.com
 
@@ -23,7 +23,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.4.1b"
+VERSION = "1.4.2b"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -563,34 +563,28 @@ def pass_zip(zip_msg):
 
 def attach_file(attach_msg, file_attach):
 	try:
-		# attach_part = MIMEBase('application','octet-stream')
-		# attach_part.set_payload('')
 		ctype, encoding = mimetypes.guess_type(file_attach)
 		if ctype is None or encoding is not None:
 			ctype = 'application/octet-stream'
-		print ctype
-		print encoding
 		maintype, subtype = ctype.split('/', 1)
 		if maintype == 'text':
-			print maintype
 			af = open(file_attach, 'r')
 			attach_part = MIMEText(af.read(), _subtype=subtype)
 			af.close()
 		elif maintype == 'image':
-			print maintype
 			af = open(file_attach, 'rb')
 			attach_part = MIMEImage(af.read(), _subtype=subtype)
 			af.close()
-		# elif maintype == 'audio':
-		# 	af = open(file_attach, 'rb')
-		# 	attach_part = MIMEAudio(af.read(), _subtype=subtype)
-		# 	af.close()
-		# else:
-		# 	af = open(file_attach, 'rb')
-		# 	attach_part = MIMEBase(maintype, subtype)
-		# 	attach_part.set_payload(af.read())
-		# 	af.close()
-		# 	encoders.encode_base64(attach_part)
+		elif maintype == 'audio':
+			af = open(file_attach, 'rb')
+			attach_part = MIMEAudio(af.read(), _subtype=subtype)
+			af.close()
+		else:
+			af = open(file_attach, 'rb')
+			attach_part = MIMEBase(maintype, subtype)
+			attach_part.set_payload(af.read())
+			af.close()
+			encoders.encode_base64(attach_part)
 		attach_part.add_header('Content-Disposition', 'attachment', filename=file_attach)
 		attach_msg.attach(attach_part)
 	except Exception, exc:

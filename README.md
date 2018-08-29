@@ -31,3 +31,4 @@ Options:
    --dbg, --debug [additional debug information]
    --text-body [text body from specified file]
    --html-body [html body from specified file]
+   --attach [attach specified file]
