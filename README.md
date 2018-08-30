@@ -1,5 +1,5 @@
 <p>Usage:<br>
-TINS.py &lt;options&gt;<br>
+&nbsp;&nbsp;TINS.py &lt;options&gt;<br>
 <br>
 Options:<br>
 -h, --help [this info]<br>
