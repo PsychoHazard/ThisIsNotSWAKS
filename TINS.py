@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.4.3
+# TINS version 1.4.4
 # Copyright (c) 2018 Rob Voss
 # rvoss@proofpoint.com
 
@@ -23,7 +23,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.4.3"
+VERSION = "1.4.4"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -619,6 +619,42 @@ def write_eml_file(write_eml_name, write_body):
 	except Exception, exc:
 		sys.exit( "Writing to file failed: %s\r\nExiting." % str(exc) ) # give a error message
 
+def help_out():
+	print 'Usage:'
+	print '   TINS.py <options>'
+	print 'Options:'
+	print '   -h, --help [this info]'
+	print '   -s, --server, --target [target mail server]'
+	print '   -p, --port [target port]'
+	print '   -t, --to, --recipient [recipient]'
+	print '   -f, --from, --sender [sender]'
+	print '   -x, --xm, --x-mailer [X-Mailer header]'
+	print '   --mix, --mixed [use multipart/mixed instead of multipart/alternative]'
+	print '   --to-header [to: header if different from recipient]'
+	print '   --from-header [from: header if different from sender]'
+	print '   --body-text [text body string]'
+	print '   --body-html [html body string]'
+	print '   --text-encode, --text-charset [character encoding for text section]'
+	print '   --html-encode, --html-charset [character encoding for html section]'
+	print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
+	print '   --high, --low [message importance (default is medium)]'
+	print '   --ssl, --tls [use ssl/tls]'
+	print '   --url [include malicious url]'
+	print '   --ssn [include ssn numbers]'
+	print '   --av, --virus [include eicar test virus]'
+	print '   --zip [include password protected zip file]'
+	print '   --eml, --write [write email to eml file]'
+	print '   --no-send [do not send email (implies --eml/--write)]'
+	print '   --eml-name [email file name (implies --eml/--write)]'
+	print '   --no-text [no text body]'
+	print '   --no-html [no html body]'
+	print '   --spam [generate test spam]'
+	print '   --adult [generate test adult spam (overrides --spam)]'
+	print '   --dbg, --debug [additional debug information]'
+	print '   --text-body [text body from specified file]'
+	print '   --html-body [html body from specified file]'
+	print '   --attach [attach specified file]'
+
 def main(argv):
 	timestamp = time.strftime("%a, %d %b %Y %H:%M:%S %z")
 	subject = "Test Message: " + timestamp
@@ -671,78 +707,12 @@ def main(argv):
 	try:
 		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn","mix","mixed","high","low","text-body=","html-body=","attach="])
 	except getopt.GetoptError:
-		print 'Usage:'
-		print '   TINS.py <options>'
-		print 'Options:'
-		print '   -h, --help [this info]'
-		print '   -s, --server, --target [target mail server]'
-		print '   -p, --port [target port]'
-		print '   -t, --to, --recipient [recipient]'
-		print '   -f, --from, --sender [sender]'
-		print '   -x, --xm, --x-mailer [X-Mailer header]'
-		print '   --mix, --mixed [use multipart/mixed instead of multipart/alternative]'
-		print '   --to-header [to: header if different from recipient]'
-		print '   --from-header [from: header if different from sender]'
-		print '   --body-text [text body string]'
-		print '   --body-html [html body string]'
-		print '   --text-encode, --text-charset [character encoding for text section]'
-		print '   --html-encode, --html-charset [character encoding for html section]'
-		print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
-		print '   --high, --low [message importance (default is medium)]'
-		print '   --ssl, --tls [use ssl/tls]'
-		print '   --url [include malicious url]'
-		print '   --ssn [include ssn numbers]'
-		print '   --av, --virus [include eicar test virus]'
-		print '   --zip [include password protected zip file]'
-		print '   --eml, --write [write email to eml file]'
-		print '   --no-send [do not send email (implies --eml/--write)]'
-		print '   --eml-name [email file name (implies --eml/--write)]'
-		print '   --no-text [no text body]'
-		print '   --no-html [no html body]'
-		print '   --spam [generate test spam]'
-		print '   --adult [generate test adult spam (overrides --spam)]'
-		print '   --dbg, --debug [additional debug information]'
-		print '   --text-body [text body from specified file]'
-		print '   --html-body [html body from specified file]'
-		print '   --attach [attach specified file]'
+		help_out()
 		sys.exit(2)
 
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'Usage:'
-			print '   TINS.py <options>'
-			print 'Options:'
-			print '   -h, --help [this info]'
-			print '   -s, --server, --target [target mail server]'
-			print '   -p, --port [target port]'
-			print '   -t, --to, --recipient [recipient]'
-			print '   -f, --from, --sender [sender]'
-			print '   -x, --xm, --x-mailer [X-Mailer header]'
-			print '   --mix, --mixed [use multipart/mixed instead of multipart/alternative]'
-			print '   --to-header [to: header if different from recipient]'
-			print '   --from-header [from: header if different from sender]'
-			print '   --body-text [text body string]'
-			print '   --body-html [html body string]'
-			print '   --text-encode, --text-charset [character encoding for text section]'
-			print '   --html-encode, --html-charset [character encoding for html section]'
-			print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
-			print '   --high, --low [message importance (default is medium)]'
-			print '   --ssl, --tls [use ssl/tls]'
-			print '   --url [include malicious url]'
-			print '   --ssn [include ssn numbers]'
-			print '   --av, --virus [include eicar test virus]'
-			print '   --zip [include password protected zip file]'
-			print '   --eml, --write [write email to eml file]'
-			print '   --no-send [do not send email (implies --eml/--write)]'
-			print '   --eml-name [email file name (implies --eml/--write)]'
-			print '   --no-text [no text body]'
-			print '   --no-html [no html body]'
-			print '   --spam [generate test spam]'
-			print '   --adult [generate test adult spam (overrides --spam)]'
-			print '   --dbg, --debug [additional debug information]'
-			print '   --text-body [text body from specified file]'
-			print '   --html-body [html body from specified file]'
-			print '   --attach [attach specified file]'
+			help_out()
 		elif opt in ("--dbg", "--debug"):
 			debug = True
 		elif opt in ("-s", "--server", "--target"):
