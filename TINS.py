@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.4.4
+# TINS version 1.4.5
 # Copyright (c) 2018 Rob Voss
 # rvoss@proofpoint.com
 
@@ -23,7 +23,7 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.4.4"
+VERSION = "1.4.5"
 
 def spam_subject(subject_seed):
 	if subject_seed == 1:
@@ -619,41 +619,59 @@ def write_eml_file(write_eml_name, write_body):
 	except Exception, exc:
 		sys.exit( "Writing to file failed: %s\r\nExiting." % str(exc) ) # give a error message
 
+def tty_rows(tty_count):
+	rows, columns = os.popen('stty size', 'r').read().split()
+	tty_lines = int(rows) - 2
+	if tty_lines <= tty_count:
+		if platform.python_version().startswith("2"):
+			raw_input('<[PRESS ENTER TO CONTINUE]>')
+		elif platform.python_version().startswith("3"):
+			input('<[PRESS ENTER TO CONTINUE]>')
+		tty_count = 0
+	return tty_count
+
 def help_out():
-	print 'Usage:'
-	print '   TINS.py <options>'
-	print 'Options:'
-	print '   -h, --help [this info]'
-	print '   -s, --server, --target [target mail server]'
-	print '   -p, --port [target port]'
-	print '   -t, --to, --recipient [recipient]'
-	print '   -f, --from, --sender [sender]'
-	print '   -x, --xm, --x-mailer [X-Mailer header]'
-	print '   --mix, --mixed [use multipart/mixed instead of multipart/alternative]'
-	print '   --to-header [to: header if different from recipient]'
-	print '   --from-header [from: header if different from sender]'
-	print '   --body-text [text body string]'
-	print '   --body-html [html body string]'
-	print '   --text-encode, --text-charset [character encoding for text section]'
-	print '   --html-encode, --html-charset [character encoding for html section]'
-	print '   --encode, --charset [character encoding for both text and html sections (overrides --text-encode/--text-charset/--html-encode/--html-charset)]'
-	print '   --high, --low [message importance (default is medium)]'
-	print '   --ssl, --tls [use ssl/tls]'
-	print '   --url [include malicious url]'
-	print '   --ssn [include ssn numbers]'
-	print '   --av, --virus [include eicar test virus]'
-	print '   --zip [include password protected zip file]'
-	print '   --eml, --write [write email to eml file]'
-	print '   --no-send [do not send email (implies --eml/--write)]'
-	print '   --eml-name [email file name (implies --eml/--write)]'
-	print '   --no-text [no text body]'
-	print '   --no-html [no html body]'
-	print '   --spam [generate test spam]'
-	print '   --adult [generate test adult spam (overrides --spam)]'
-	print '   --dbg, --debug [additional debug information]'
-	print '   --text-body [text body from specified file]'
-	print '   --html-body [html body from specified file]'
-	print '   --attach [attach specified file]'
+	out = PNAME + " v" + VERSION + """
+
+Usage:
+   TINS.py <options>
+Options:
+   -h, --help [this info]
+   -s, --server, --target [target mail server]
+   -p, --port [target port]
+   -t, --to, --recipient [recipient]
+   -f, --from, --sender [sender]
+   -x, --xm, --x-mailer [X-Mailer header]
+   --mix, --mixed [use multipart/mixed instead of multipart/alternative]
+   --to-header [to: header if different from recipient]
+   --from-header [from: header if different from sender]
+   --body-text [text body string]
+   --body-html [html body string]
+   --text-encode, --text-charset [character encoding for text section]
+   --html-encode, --html-charset [character encoding for html section]
+   --encode, --charset [character encoding for both text and html sections
+      (overrides --text-encode/--text-charset/--html-encode/--html-charset)]
+   --high, --low [message importance (default is medium)]
+   --ssl, --tls [use ssl/tls]
+   --url [include malicious url]
+   --ssn [include ssn numbers]
+   --av, --virus [include eicar test virus]
+   --zip [include password protected zip file]
+   --eml, --write [write email to eml file]
+   --no-send [do not send email (implies --eml/--write)]
+   --eml-name [email file name (implies --eml/--write)]
+   --no-text [no text body]
+   --no-html [no html body]
+   --spam [generate test spam]
+   --adult [generate test adult spam (overrides --spam)]
+   --dbg, --debug [additional debug information]
+   --text-body [text body from specified file]
+   --html-body [html body from specified file]
+   --attach [attach specified file]"""
+	count = 0
+	for line in out.splitlines():
+		print (line)
+		count = tty_rows(count) + 1
 
 def main(argv):
 	timestamp = time.strftime("%a, %d %b %Y %H:%M:%S %z")
