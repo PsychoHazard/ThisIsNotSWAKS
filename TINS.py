@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This Is Not SWAKS
-# TINS version 1.4.5
+# TINS version 1.4.7
 # Copyright (c) 2018 Rob Voss
 # rvoss@proofpoint.com
 
@@ -10,6 +10,8 @@ import sys
 import getopt
 import os
 import mimetypes
+import platform
+import logging
 from tempfile import TemporaryFile
 from smtplib import SMTP
 from email.mime.multipart import MIMEMultipart
@@ -23,9 +25,10 @@ from random import randint
 from email import charset
 
 PNAME = "TINS"
-VERSION = "1.4.5"
+VERSION = "1.4.7"
 
 def spam_subject(subject_seed):
+	logging.info("Generating spammy subject")
 	if subject_seed == 1:
 		spammy_subject = "Guaranteed to lose 10-12 lbs in 30 days 10.206"
 	elif subject_seed == 2:
@@ -35,6 +38,7 @@ def spam_subject(subject_seed):
 	return spammy_subject
 
 def spam_text_body(text_seed):
+	logging.info("Generating spammy text")
 	if text_seed == 1:
 		spammy_text ="""\
 1) Fight The Risk of Cancer!
@@ -278,6 +282,7 @@ Email Address & Phone Number(Please Write Neat)
 	return spammy_text
 
 def spam_html_body(html_seed):
+	logging.info("Generating spammy HTML")
 	if html_seed == 1:
 		spammy_html = """\
 <ol>
@@ -478,6 +483,7 @@ Email Address & Phone Number(Please Write Neat)
 	return spammy_html
 
 def mime_headers(mime_multipart, mime_msg_id, mime_xmailer, mime_timestamp, mime_subject, mime_from_header, mime_to_header, mime_importance, mime_priority):
+	logging.info("Generating MIME headers")
 	try:
 		mime_msg = MIMEMultipart(mime_multipart)
 		mime_msg['Date'] = mime_timestamp
@@ -489,36 +495,46 @@ def mime_headers(mime_multipart, mime_msg_id, mime_xmailer, mime_timestamp, mime
 		mime_msg['X-Priority'] = mime_priority
 		mime_msg['X-Mailer'] = mime_xmailer
 	except Exception, exc:
+		logging.critical( "Adding MIME headers failed: %s\r\nExiting." % str(exc) )
 		sys.exit( "Adding MIME headers failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return mime_msg
 
 def text_mime(text_msg, mime_text, zip_text, url_text, ssn_text, text_charset):
+	logging.info("Generating text body")
 	zip_mime_text = ""
 	ssn_mime_text = ""
 	url_mime_text = "\r\n"
 	try:
 		if zip_text:
+			logging.info("Adding ZIP text to text body")
 			zip_mime_text = '\r\nPlease see the attached.\r\nIf needed, password = "test"\r\n'
 		if ssn_text:
+			logging.info("Adding SSN text to text body")
 			ssn_mime_text = '\r\nHave some SSN numbers:\r\n623-57-9564\r\nSSN 215-79-8735\r\n544 71 7243\r\n112968357\r\n'
 		if url_text:
+			logging.info("Adding URL text to text body")
 			url_mime_text = "\r\nFor awesome stuff and free candy go to http://tapdemo.evilscheme.org/files/tapdemo_313533343139383733322e3939.docx\r\nWe promise it's totally safe!\r\n"
 		mime_text_body = mime_text + ssn_mime_text + zip_mime_text + url_mime_text
 		text_part = MIMEText(mime_text_body.encode(text_charset), 'plain', text_charset)
 		text_msg.attach(text_part)
 	except Exception, exc:
+		logging.critical( "Adding text body failed: %s\r\nExiting." % str(exc) )
 		sys.exit( "Adding text body failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return text_msg
 	
 def html_mime(html_msg, mime_html_text, zip_html, url_html, ssn_html, html_charset):
+	logging.info("Generating HTML body")
 	zip_mime_html = "\r\n"
 	ssn_mime_html = ""
 	url_mime_html = ""
 	if zip_html:
+		logging.info("Adding ZIP text to HTML body")
 		zip_mime_html = '\r\n		<p>Please see the attached.<br>\r\n		If needed, password = "test"</p>\r\n'
 	if ssn_html:
+		logging.info("Adding SSN text to HTML body")
 		ssn_mime_html = '\r\n		<p>Have some SSN numbers:<br>\r\n		623-57-9564<br>\r\n		SSN 215-79-8735<br>\r\n		544 71 7243<br>\r\n		112968357</p>\r\n'
 	if url_html:
+		logging.info("Adding URL text to HTML body")
 		url_mime_html = '		<p>For awesome stuff and free candy go to <a href="http://tapdemo.evilscheme.org/files/tapdemo_313533343139383733322e3939.docx">totallysafe.unmarkedvan.com</a></p>\r\n'
 	try:
 		mime_html1 = """\
@@ -534,10 +550,12 @@ def html_mime(html_msg, mime_html_text, zip_html, url_html, ssn_html, html_chars
 		html_part = MIMEText(mime_html_body.encode(html_charset), 'html', html_charset)
 		html_msg.attach(html_part)
 	except Exception, exc:
+		logging.critical( "Adding html body failed: %s\r\nExiting." % str(exc) )
 		sys.exit( "Adding html body failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return html_msg
 
 def eicar(eicar_msg):
+	logging.info("Attaching EICAR virus")
 	try:
 		eicar_base64 = 'WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNU\r\nLUZJTEUhJEgrSCo=\r\n'
 		eicar_part = MIMEBase('application','octet-stream')
@@ -546,10 +564,12 @@ def eicar(eicar_msg):
 		eicar_part.add_header('Content-Transfer-Encoding', 'base64')
 		eicar_msg.attach(eicar_part)
 	except Exception, exc:
+		logging.critical( "Adding EICAR virus failed: %s\r\nExiting." % str(exc) )
 		sys.exit( "Adding EICAR virus failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return eicar_msg
 
 def pass_zip(zip_msg):
+	logging.info("Attaching ZIP file")
 	try:
 		zip_base64 = 'UEsDBAoACQAAACl7aDTABgONIAAAABQAAAARABUAYXJjaGl2ZXMvdGVzdC50eHRVVAkAA95nD0Te\r\nZw9EVXgEAOYn5ieyjOxAmV7wTzO2Ecxui1HKQBjXwV22GTqb6O99X3KDd1BLBwjABgONIAAAABQA\r\nAABQSwECFwMKAAkAAAApe2g0wAYDjSAAAAAUAAAAEQANAAAAAAABAAAAtIEAAAAAYXJjaGl2ZXMv\r\ndGVzdC50eHRVVAUAA95nD0RVeAAAUEsFBgAAAAABAAEATAAAAHQAAAAAAA==\r\n'
 		zip_part = MIMEBase('application','octet-stream')
@@ -558,6 +578,7 @@ def pass_zip(zip_msg):
 		zip_part.add_header('Content-Disposition', 'attachment; filename="../test.zip"')
 		zip_msg.attach(zip_part)
 	except Exception, exc:
+		logging.critical( "Adding zip file failed: %s\r\nExiting." % str(exc) )
 		sys.exit( "Adding zip file failed: %s\r\nExiting." % str(exc) ) # give a error message
 	return zip_msg
 
@@ -566,6 +587,8 @@ def attach_file(attach_msg, file_attach):
 		ctype, encoding = mimetypes.guess_type(file_attach)
 		if ctype is None or encoding is not None:
 			ctype = 'application/octet-stream'
+		logging.info("Attaching " + file_attach)
+		logging.info(file_attach + " MIME type = " + ctype)
 		maintype, subtype = ctype.split('/', 1)
 		if maintype == 'text':
 			af = open(file_attach, 'r')
@@ -588,35 +611,59 @@ def attach_file(attach_msg, file_attach):
 		attach_part.add_header('Content-Disposition', 'attachment', filename=file_attach)
 		attach_msg.attach(attach_part)
 	except Exception, exc:
+		logging.critical( "Adding %s file failed: %s\r\nExiting." % (file_attach, str(exc)) )
 		sys.exit( "Adding %s file failed: %s\r\nExiting." % (file_attach, str(exc)) ) # give a error message
 	return attach_msg
 
 def try_tls(tls_serv):
+	logging.info("Trying TLS")
 	try:
 		tls_serv.starttls()
 	except Exception, exc:
+		logging.critical( "Email failed: %s\r\nExiting." % str(exc) )
 		sys.exit( "Email failed: %s\r\nExiting." % str(exc) ) # give a error message
 
-def send_email(send_target, send_port, send_sender, send_recipient, send_body, send_tls, debug_send):
+def send_email(send_target, send_port, send_sender, send_recipient, send_body, send_tls):
+	logging.info("Sending email")
+	t = TemporaryFile()
+	available_fd = t.fileno()
+	t.close()
+	os.dup2(2,available_fd)
+	t = TemporaryFile()
+	os.dup2(t.fileno(),2)
 	try:
 		server = SMTP(send_target, send_port)
-		if debug_send:
-			server.set_debuglevel(100)
+		server.set_debuglevel(100)
 		server.ehlo_or_helo_if_needed()
 		if send_tls:
 			try_tls(server)
 		server.sendmail(send_sender, send_recipient, send_body)
 		server.quit()
+		sys.stderr.flush()
+		t.flush()
+		t.seek(0)
+		stderr_output = t.read()
+		t.close()
+		os.dup2(available_fd,2)
+		os.close(available_fd)
+		count = 0
+		for line in stderr_output.decode('utf-8').split("\n"):
+			count += 1
+			logging.debug(line)
+			print (line)
 	except Exception, exc:
-		sys.exit( "Email failed: %s\r\nExiting." % str(exc) ) # give a error message
+		logging.critical( "Email failed: %s\r\nExiting." % str(exc) ) # log error message
+		sys.exit( "Email failed: %s\r\nExiting." % str(exc) ) # give an error message
 
 def write_eml_file(write_eml_name, write_body):
+	logging.info("Writing email to " + write_eml_name)
 	try:
 		emf = open(write_eml_name, 'w')
 		emf.write(write_body)
 		emf.close()
 		print 'Email written to file:', write_eml_name
 	except Exception, exc:
+		logging.critical( "Writing to file failed: %s\r\nExiting." % str(exc) )
 		sys.exit( "Writing to file failed: %s\r\nExiting." % str(exc) ) # give a error message
 
 def tty_rows(tty_count):
@@ -642,6 +689,15 @@ Options:
    -t, --to, --recipient [recipient]
    -f, --from, --sender [sender]
    -x, --xm, --x-mailer [X-Mailer header]
+   --log [enable logging]
+   --log-level [set logging level, implies --log
+      valid values are:
+         debug
+         info
+         warning (default)
+         error
+         critical]
+   --log-file [set name of log file, defaults to TINS.log, implies --log]
    --mix, --mixed [use multipart/mixed instead of multipart/alternative]
    --to-header [to: header if different from recipient]
    --from-header [from: header if different from sender]
@@ -664,7 +720,6 @@ Options:
    --no-html [no html body]
    --spam [generate test spam]
    --adult [generate test adult spam (overrides --spam)]
-   --dbg, --debug [additional debug information]
    --text-body [text body from specified file]
    --html-body [html body from specified file]
    --attach [attach specified file]"""
@@ -699,7 +754,6 @@ def main(argv):
 	eml_send = True
 	eml_file = False
 	eml_name = time.strftime("%Y%m%d%H%M%S%z") + ".eml"
-	debug = False
 	no_has_to = True
 	no_has_from = True
 	text_encode = 'us-ascii'
@@ -714,16 +768,14 @@ def main(argv):
 	htmlfile = 'NONE'
 	attachfile = 'NONE'
 	is_attach = False
-	
-	tmp = TemporaryFile()
-	file_desc = tmp.fileno()
-	tmp.close()
-	os.dup2(2, file_desc)
-	tmp = TemporaryFile()
-	os.dup2(tmp.fileno(), 2)
+	is_logging = False
+	log_level = logging.WARNING
+	log_file = 'TINS.log'
+	log_init = ''
+	log_warn = False
 
 	try:
-		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["dbg","debug","server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn","mix","mixed","high","low","text-body=","html-body=","attach="])
+		opts, args = getopt.getopt(argv,"h:s:p:t:f:e:x:",["server=","target=","port=","to=","recipient=","from=","sender=","ehlo=","helo=","to-header=","from-header=","subject=","ssl","tls","spam","adult","virus","av","url","zip","eml","write","no-send","eml-name=","no-text","no-html","xm=","x-mailer=","text-encode=","text-charset=","html-encode=","html-charset=","encode=","charset=","body-text=","body-html=","ssn","mix","mixed","high","low","text-body=","html-body=","attach=","log","log-level=","log-file="])
 	except getopt.GetoptError:
 		help_out()
 		sys.exit(2)
@@ -731,8 +783,6 @@ def main(argv):
 	for opt, arg in opts:
 		if opt == '-h':
 			help_out()
-		elif opt in ("--dbg", "--debug"):
-			debug = True
 		elif opt in ("-s", "--server", "--target"):
 			target = arg
 		elif opt in ("-p", "--port"):
@@ -812,6 +862,42 @@ def main(argv):
 		elif opt == '--attach':
 			is_attach = True
 			attachfile = arg
+		elif opt == '--log':
+			is_logging = True
+		elif opt == '--log-level':
+			is_logging = True
+			log_init = "Logging initialized."
+			if arg.lower() == 'debug':
+				log_level = logging.DEBUG
+			elif arg.lower() == 'info':
+				log_level = logging.INFO
+			elif arg.lower() == 'warning':
+				log_level = logging.WARNING
+			elif arg.lower() == 'error':
+				log_level = logging.ERROR
+			elif arg.lower() == 'critical':
+				log_level = logging.CRITICAL
+			else:
+				log_init = "Invalid log level. Falling back to default."
+				log_level = logging.WARNING
+				log_warn = True
+			print (log_init)
+		elif opt == '--log-file':
+			is_logging = True
+			log_file = arg
+
+	if is_logging:
+		logging.basicConfig(format='[%(asctime)s] <%(levelname)s> %(message)s', filename=log_file, level=log_level)
+	else:
+		logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.ERROR)
+
+	if log_warn:
+		logging.warning(log_init)
+	else:
+		logging.info(log_init)
+
+	logging.debug('Parameters:' + str(sys.argv[1:]))
+	logging.info("Beginning email creation")
 
 	if encode_both:
 		text_encode = all_encode
@@ -824,6 +910,7 @@ def main(argv):
 		from_header = sender
 	
 	if adult_test:
+		logging.info("Generating Adult email")
 		subject = "Wanna hook up? I love you all night long!"
 		text = "Hey. Great profile. See mine. XoXo Julz, http://gonie.info"
 		html_text = '		<p>Hey. Great profile.<br>See mine.<br>XoXo Julz, <a href="http://gonie.info">Click here to see my profile!</a></p>'
@@ -831,41 +918,6 @@ def main(argv):
 		subject = spam_subject(seed)
 		text = spam_text_body(seed)
 		html_text = spam_html_body(seed)
-		
-	if debug:
-		print 'timestamp =', timestamp
-		print 'target =', target
-		print 'port =', port
-		print 'helo/ehlo =', helo
-		print 'recipient =', recipient
-		print 'sender =', sender
-		print 'subject =', subject
-		print 'to: header =', to_header
-		print 'from: header =', from_header
-		print 'msgid =', msg_id
-		print 'x-mailer =', xmailer
-		print 'text =', text
-		print 'html text =', html_text
-		print 'tls/ssl =', tls
-		print 'av test =', av_test
-		print 'spam test =', spam_test
-		print 'adult spam test =', adult_test
-		print 'url test =', url_test
-		print 'zip test =', zip_test
-		print 'ssn test =', ssn_test
-		print 'send email =', eml_send
-		print 'write eml file =', eml_file
-		print 'eml file name =', eml_name
-		print 'use text =', use_text
-		print 'use html =', use_html
-		print 'text charset = ', text_encode
-		print 'html charset = ', html_encode
-		print 'content-type = ', 'multipart/' + multi_type
-		print 'importance = ', msg_importance
-		print 'priority = ', msg_priority
-		print 'text body = ', textfile
-		print 'html body = ', htmlfile
-		print 'attached file = ', attachfile
 
 	msg = mime_headers(multi_type, msg_id, xmailer, timestamp, subject, from_header, to_header, msg_importance, msg_priority)
 	
@@ -890,32 +942,13 @@ def main(argv):
 		msg = attach_message
 
 	body = msg.as_string()
+	logging.info("Email creation completed")
 
 	if eml_send:
-		send_email(target, port, sender, recipient, body, tls, debug)
+		send_email(target, port, sender, recipient, body, tls)
 
 	if eml_file:
 		write_eml_file(eml_name, body)
-	
-	sys.stderr.flush()
-	tmp.flush()
-	tmp.seek(0)
-	stderr_out = tmp.read()
-	tmp.close()
-	os.dup2(file_desc, 2)
-	os.close(file_desc)
-
-	if debug:
-		debug_file = "debug_" + time.strftime("%Y%m%d%H%M%S%z") + ".log"
-		debug_out = open(debug_file, 'a')
-		print 'STDERR:'
-		count = 0
-		for line in stderr_out.decode('utf-8').split("\r\n"):
-			count += 1
-			print("{:3} {}".format(count,line))
-			debug_out.write("{:3} {}".format(count,line))
-			debug_out.write("\r\n")
-		debug_out.close()
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
